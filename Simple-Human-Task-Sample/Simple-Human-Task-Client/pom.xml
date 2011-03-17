@@ -3,8 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.plugtree.training.jbpm</groupId>
-    <artifactId>05.1.2-HumanTasksClient</artifactId>
-    <name>05.1.2 - HumanTasksClient</name>
+    <artifactId>HumanTasksClient</artifactId>
+    <name>Human Tasks Client</name>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 

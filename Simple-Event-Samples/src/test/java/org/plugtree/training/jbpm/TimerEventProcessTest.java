@@ -19,14 +19,12 @@ import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
-import org.drools.runtime.process.WorkItem;
-import org.drools.runtime.process.WorkItemHandler;
-import org.drools.runtime.process.WorkItemManager;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.plugtree.training.jbpm.handler.HumanTaskMockHandler;
 
 /**
  *
@@ -124,23 +122,5 @@ public class TimerEventProcessTest {
         newSession.getWorkItemManager().registerWorkItemHandler("Human Task", humanTaskMockHandler);
 
         return newSession;
-    }
-}
-
-class HumanTaskMockHandler implements WorkItemHandler {
-
-    private WorkItemManager workItemManager;
-    private Long workItemId;
-
-    public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
-        this.workItemId = workItem.getId();
-        this.workItemManager = manager;
-    }
-
-    public void abortWorkItem(WorkItem workItem, WorkItemManager manager) {
-    }
-
-    public void completeWorkItem() {
-        this.workItemManager.completeWorkItem(workItemId, null);
     }
 }

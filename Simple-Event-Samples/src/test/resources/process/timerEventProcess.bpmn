@@ -25,7 +25,7 @@
     <startEvent id="_1" name="Start" />
     <intermediateCatchEvent id="_18" name="Timer" >
       <timerEventDefinition>
-        <timeCycle>0</timeCycle>
+        <timeCycle xsi:type="tFormalExpression">1000ms</timeCycle>
       </timerEventDefinition>
     </intermediateCatchEvent>
     <endEvent id="_8" name="End" >

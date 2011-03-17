@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.example.org/MinimalExample"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_inputDataItem" />
+  <itemDefinition id="_errorListItem" structureRef="java.util.List" />
+
+  <itemDefinition id="_2-hasErrorsItem" structureRef="Boolean" />
+
+  <escalation id="InputDataError" escalationCode="InputDataError" />
+  <escalation id="MyEscalation" escalationCode="MyEscalation" />
+  <process processType="Private" isExecutable="true" id="org.plugtree.training.jbpm.escalationeventprocess" name="Escalation Boundary Event Process" >
+
+    <!-- process variables -->
+    <property id="inputData" itemSubjectRef="_inputDataItem"/>
+    <property id="errorList" itemSubjectRef="_errorListItem"/>
+
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess" />
+    <subProcess id="_2" name="Validation Subprocess"  >
+    <!-- variables -->
+    <property id="hasErrors" itemSubjectRef="_2-hasErrorsItem"/>
+    <!-- nodes -->
+    <startEvent id="_2-1" name="StartSubProcess" />
+    <endEvent id="_2-2" name="ValidationFailedEscalationEvent" >
+      <escalationEventDefinition escalationRef="InputDataError" />
+    </endEvent>
+    <exclusiveGateway id="_2-3" name="Gateway" gatewayDirection="Diverging" />
+    <endEvent id="_2-4" name="End" >
+        <terminateEventDefinition/>
+    </endEvent>
+    <scriptTask id="_2-5" name="Validate Input Data" scriptFormat="http://www.java.com/java" >
+      <script>kcontext.setVariable("hasErrors",inputData==null);
+System.out.println("Validation errors? "+kcontext.getVariable("hasErrors"));</script>
+    </scriptTask>
+    <!-- connections -->
+    <sequenceFlow id="_2-3-_2-2" sourceRef="_2-3" targetRef="_2-2" name="validationFailed" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return hasErrors == true;</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_2-5-_2-3" sourceRef="_2-5" targetRef="_2-3" />
+    <sequenceFlow id="_2-3-_2-4" sourceRef="_2-3" targetRef="_2-4" name="validation OK" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return hasErrors == false;</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_2-1-_2-5" sourceRef="_2-1" targetRef="_2-5" />
+    </subProcess>
+    <endEvent id="_3" name="EndProcess" >
+        <terminateEventDefinition/>
+    </endEvent>
+    <boundaryEvent id="_4" name="ValidationFailedEscalationEvent" attachedToRef="_2" cancelActivity="false" >
+      <escalationEventDefinition escalationRef="InputDataError" />
+    </boundaryEvent>
+    <scriptTask id="_5" name="Inform Error" >
+      <script>System.out.println("Escalation handled");
+errorList.add("Invalid input data!");</script>
+    </scriptTask>
+    <endEvent id="_6" name="EndProcess" >
+        <terminateEventDefinition/>
+    </endEvent>
+    <userTask id="_7" name="Do Your Job" >
+      <ioSpecification>
+        <dataInput id="_7_CommentInput" name="Comment" />
+        <dataInput id="_7_SkippableInput" name="Skippable" />
+        <dataInput id="_7_ContentInput" name="Content" />
+        <dataInput id="_7_TaskNameInput" name="TaskName" />
+        <dataInput id="_7_PriorityInput" name="Priority" />
+        <inputSet>
+          <dataInputRefs>_7_CommentInput</dataInputRefs>
+          <dataInputRefs>_7_SkippableInput</dataInputRefs>
+          <dataInputRefs>_7_ContentInput</dataInputRefs>
+          <dataInputRefs>_7_TaskNameInput</dataInputRefs>
+          <dataInputRefs>_7_PriorityInput</dataInputRefs>
+        </inputSet>
+        <outputSet>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <targetRef>_7_CommentInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">Everything is fine. Do Your Job!!</from>
+          <to xsi:type="tFormalExpression">_7_CommentInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_7_SkippableInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">false</from>
+          <to xsi:type="tFormalExpression">_7_SkippableInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_7_ContentInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_7_ContentInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_7_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">Do Your Job</from>
+          <to xsi:type="tFormalExpression">_7_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_7_PriorityInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_7_PriorityInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression>user</formalExpression>
+        </resourceAssignmentExpression>
+      </potentialOwner>
+    </userTask>
+
+    <!-- connections -->
+    <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
+    <sequenceFlow id="_7-_3" sourceRef="_7" targetRef="_3" />
+    <sequenceFlow id="_4-_5" sourceRef="_4" targetRef="_5" />
+    <sequenceFlow id="_5-_6" sourceRef="_5" targetRef="_6" />
+    <sequenceFlow id="_2-_7" sourceRef="_2" targetRef="_7" />
+
+  </process>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="org.plugtree.training.jbpm.escalationeventprocess" >
+      <bpmndi:BPMNShape bpmnElement="_1" >
+        <dc:Bounds x="16" y="127" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_2" >
+        <dc:Bounds x="96" y="16" width="320" height="271" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_2-1" >
+        <dc:Bounds x="199" y="55" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_2-2" >
+        <dc:Bounds x="320" y="53" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_2-3" >
+        <dc:Bounds x="332" y="135" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_2-4" >
+        <dc:Bounds x="338" y="214" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_2-5" >
+        <dc:Bounds x="150" y="138" width="157" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_3" >
+        <dc:Bounds x="580" y="127" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_4" >
+        <dc:Bounds x="196" y="273" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_5" >
+        <dc:Bounds x="58" y="346" width="320" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_6" >
+        <dc:Bounds x="475" y="345" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_7" >
+        <dc:Bounds x="448" y="127" width="128" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_2-3-_2-2" >
+        <di:waypoint x="260" y="143" />
+        <di:waypoint x="248" y="61" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_2-5-_2-3" >
+        <di:waypoint x="132" y="146" />
+        <di:waypoint x="260" y="143" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_2-3-_2-4" >
+        <di:waypoint x="260" y="143" />
+        <di:waypoint x="266" y="222" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_2-1-_2-5" >
+        <di:waypoint x="127" y="63" />
+        <di:waypoint x="132" y="146" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_1-_2" >
+        <di:waypoint x="40" y="151" />
+        <di:waypoint x="256" y="151" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_7-_3" >
+        <di:waypoint x="512" y="151" />
+        <di:waypoint x="604" y="151" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_4-_5" >
+        <di:waypoint x="220" y="297" />
+        <di:waypoint x="218" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_5-_6" >
+        <di:waypoint x="218" y="370" />
+        <di:waypoint x="499" y="369" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_2-_7" >
+        <di:waypoint x="256" y="151" />
+        <di:waypoint x="512" y="151" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>

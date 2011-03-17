@@ -52,7 +52,7 @@ public class SimpleProcessTest {
     } 
     
     @Test
-    public void SimpleProcessTest(){
+    public void simpleProcessTest(){
         //Start the process using its id
         ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.simpleprocess");
         

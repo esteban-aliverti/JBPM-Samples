@@ -19,7 +19,7 @@
 
   <escalation id="InputDataError" escalationCode="InputDataError" />
   <escalation id="MyEscalation" escalationCode="MyEscalation" />
-  <process processType="Private" isExecutable="true" id="org.plugtree.training.jbpm.escalationeventprocess" name="Escalation Boundary Event Process" >
+  <process processType="Private" isExecutable="true" id="org.plugtree.training.jbpm.escalationeventprocess" name="Escalation Boundary Event Process" tns:packageName="org.plugtree.training.jbpm" >
 
     <!-- process variables -->
     <property id="inputData" itemSubjectRef="_inputDataItem"/>

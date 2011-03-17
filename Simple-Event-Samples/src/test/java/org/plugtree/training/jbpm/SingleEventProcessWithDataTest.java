@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  * @author esteban
  */
-public class SingleEventProcessTest {
+public class SingleEventProcessWithDataTest {
 
     private KnowledgeRuntimeLogger fileLogger;
     private StatefulKnowledgeSession ksession;
@@ -52,15 +52,30 @@ public class SingleEventProcessTest {
     } 
     
     @Test
-    public void simpleProcessTest(){
+    public void validPaymentTest(){
         //Start the process using its id
-        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.singleeventprocess");
+        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.singleeventprocesswithdata");
         
         //The process is in the gateway waiting for the event
         Assert.assertEquals(ProcessInstance.STATE_ACTIVE, process.getState());
         
         //The event arrives
-        ksession.signalEvent("payment", null);
+        ksession.signalEvent("payment", 110);
+        
+        //The process continues until it reaches the end node
+        Assert.assertEquals(ProcessInstance.STATE_COMPLETED, process.getState());
+    }
+    
+    @Test
+    public void invalidPaymentTest(){
+        //Start the process using its id
+        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.singleeventprocesswithdata");
+        
+        //The process is in the gateway waiting for the event
+        Assert.assertEquals(ProcessInstance.STATE_ACTIVE, process.getState());
+        
+        //The event arrives
+        ksession.signalEvent("payment", 90);
         
         //The process continues until it reaches the end node
         Assert.assertEquals(ProcessInstance.STATE_COMPLETED, process.getState());
@@ -75,7 +90,7 @@ public class SingleEventProcessTest {
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 
         //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("process/singleEventProcess.bpmn"), ResourceType.BPMN2);
+        kbuilder.add(new ClassPathResource("process/singleEventProcessWithData.bpmn"), ResourceType.BPMN2);
         System.out.println("Compiling resources");
         
         //Check for errors

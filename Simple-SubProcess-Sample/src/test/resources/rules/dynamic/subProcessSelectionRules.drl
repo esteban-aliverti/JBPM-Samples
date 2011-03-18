@@ -1,0 +1,27 @@
+package org.plugtree.training.jbpm
+
+#list any import classes here.
+import org.plugtree.training.jbpm.model.Person
+import org.plugtree.training.jbpm.model.Car
+import org.drools.runtime.process.WorkflowProcessInstance;
+
+rule "Select Person Tagger"	
+	ruleflow-group "select_subprocess"
+	when
+		$process: WorkflowProcessInstance()
+		$p:Person()
+	then 
+		System.out.println("EAA");
+		((WorkflowProcessInstance)kcontext.getKnowledgeRuntime().getProcessInstance($process.getId())).setVariable("selectedSubProcessId","org.plugtree.training.jbpm.persontaggerprocess");
+		retract($p);
+end
+
+rule "Select Car Tagger"
+	ruleflow-group "select_subprocess"	
+	when
+		$process: WorkflowProcessInstance()
+		$c:Car()
+	then 
+		((WorkflowProcessInstance)kcontext.getKnowledgeRuntime().getProcessInstance($process.getId())).setVariable("selectedSubProcessId","org.plugtree.training.jbpm.cartaggerprocess");
+		retract($c);
+end

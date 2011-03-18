@@ -6,10 +6,6 @@ package org.plugtree.training.jbpm;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
@@ -26,13 +22,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 /**
  *
  * @author esteban
  */
-public class MultipleNodeInstanceProcessTest {
+public class DelayTimerEventProcessTest {
 
     private KnowledgeRuntimeLogger fileLogger;
     private StatefulKnowledgeSession ksession;
@@ -57,68 +52,20 @@ public class MultipleNodeInstanceProcessTest {
         }
     } 
     
-    @Test
-    public void multipleNodeInstanceProcessTest(){
-        
-        List<Number> numbers = new ArrayList<Number>();
-        numbers.add(2);
-        numbers.add(4);
-        numbers.add(56);
-        numbers.add(7);
-        numbers.add(10);
-        numbers.add(13);
-        
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("numberList", numbers);
-        parameters.put("errorList", new ArrayList());
-        
+    @Ignore("JBPM5 bug? Process stays in ACTIVE state. End Event node is never executed!")
+    public void delayTimerEventProcessTest() throws InterruptedException{
         //Start the process using its id
-        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.multiplenodeinstanceprocess",parameters);
+        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.delaytimereventprocess");
         
-        //The process will run until there are no more nodes to execute.
-        //Because this process doesn't have any wait-state, the process is
-        //running from start to end
+        Assert.assertEquals(ProcessInstance.STATE_ACTIVE, process.getState());
+        
+        Thread.sleep(15000);
+        
+        //The process continues until it reaches the end node
         Assert.assertEquals(ProcessInstance.STATE_COMPLETED, process.getState());
-        //Let see the error list. It should contain 2 values: 7 and 13
-        List errorList = (List) ((WorkflowProcessInstance)process).getVariable("errorList");
         
-        Assert.assertFalse(errorList.isEmpty());
-        Assert.assertEquals(2,errorList.size());
-        Assert.assertTrue(errorList.contains(7));
-        Assert.assertTrue(errorList.contains(13));
-        
-    }
-    
-    
-    @Ignore("Internal signaling is not working")
-    public void multipleNodeInstanceWithEscalationProcessTest(){
-        
-        List<Number> numbers = new ArrayList<Number>();
-        numbers.add(2);
-        numbers.add(4);
-        numbers.add(56);
-        numbers.add(7);
-        numbers.add(10);
-        numbers.add(13);
-        
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("numberList", numbers);
-        parameters.put("errorList", new ArrayList());
-        
-        //Start the process using its id
-        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.multiplenodeinstancewithescalationprocess",parameters);
-        
-        //The process will run until there are no more nodes to execute.
-        //Because this process doesn't have any wait-state, the process is
-        //running from start to end
-        Assert.assertEquals(ProcessInstance.STATE_COMPLETED, process.getState());
-        //Let see the error list. It should contain 2 values: 7 and 13
-        List errorList = (List) ((WorkflowProcessInstance)process).getVariable("errorList");
-        
-        Assert.assertFalse(errorList.isEmpty());
-        Assert.assertEquals(2,errorList.size());
-        Assert.assertTrue(errorList.contains(7));
-        Assert.assertTrue(errorList.contains(13));
+        Long timerExecutionTime = (Long) ((WorkflowProcessInstance)process).getVariable("timerExecutionTime");
+        Assert.assertTrue(timerExecutionTime >= 10000);
         
     }
     
@@ -129,9 +76,9 @@ public class MultipleNodeInstanceProcessTest {
     public StatefulKnowledgeSession createKSession(){
         //Create the kbuilder
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+
         //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("process/multipleNodeInstanceProcess.bpmn"), ResourceType.BPMN2);
-        kbuilder.add(new ClassPathResource("process/multipleNodeInstanceWithEscalationProcess.bpmn"), ResourceType.BPMN2);
+        kbuilder.add(new ClassPathResource("process/delayTimerEventProcess.bpmn"), ResourceType.BPMN2);
         System.out.println("Compiling resources");
         
         //Check for errors

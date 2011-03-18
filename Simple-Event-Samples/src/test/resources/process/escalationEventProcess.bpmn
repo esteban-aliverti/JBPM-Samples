@@ -18,7 +18,6 @@
   <itemDefinition id="_2-hasErrorsItem" structureRef="Boolean" />
 
   <escalation id="InputDataError" escalationCode="InputDataError" />
-  <escalation id="MyEscalation" escalationCode="MyEscalation" />
   <process processType="Private" isExecutable="true" id="org.plugtree.training.jbpm.escalationeventprocess" name="Escalation Boundary Event Process" tns:packageName="org.plugtree.training.jbpm" >
 
     <!-- process variables -->
@@ -36,9 +35,7 @@
       <escalationEventDefinition escalationRef="InputDataError" />
     </endEvent>
     <exclusiveGateway id="_2-3" name="Gateway" gatewayDirection="Diverging" />
-    <endEvent id="_2-4" name="End" >
-        <terminateEventDefinition/>
-    </endEvent>
+    <endEvent id="_2-4" name="End" />
     <scriptTask id="_2-5" name="Validate Input Data" scriptFormat="http://www.java.com/java" >
       <script>kcontext.setVariable("hasErrors",inputData==null);
 System.out.println("Validation errors? "+kcontext.getVariable("hasErrors"));</script>
@@ -66,64 +63,7 @@ errorList.add("Invalid input data!");</script>
     <endEvent id="_6" name="EndProcess" >
         <terminateEventDefinition/>
     </endEvent>
-    <userTask id="_7" name="Do Your Job" >
-      <ioSpecification>
-        <dataInput id="_7_CommentInput" name="Comment" />
-        <dataInput id="_7_SkippableInput" name="Skippable" />
-        <dataInput id="_7_ContentInput" name="Content" />
-        <dataInput id="_7_TaskNameInput" name="TaskName" />
-        <dataInput id="_7_PriorityInput" name="Priority" />
-        <inputSet>
-          <dataInputRefs>_7_CommentInput</dataInputRefs>
-          <dataInputRefs>_7_SkippableInput</dataInputRefs>
-          <dataInputRefs>_7_ContentInput</dataInputRefs>
-          <dataInputRefs>_7_TaskNameInput</dataInputRefs>
-          <dataInputRefs>_7_PriorityInput</dataInputRefs>
-        </inputSet>
-        <outputSet>
-        </outputSet>
-      </ioSpecification>
-      <dataInputAssociation>
-        <targetRef>_7_CommentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Everything is fine. Do Your Job!!</from>
-          <to xsi:type="tFormalExpression">_7_CommentInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_7_SkippableInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">false</from>
-          <to xsi:type="tFormalExpression">_7_SkippableInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_7_ContentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_7_ContentInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_7_TaskNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Do Your Job</from>
-          <to xsi:type="tFormalExpression">_7_TaskNameInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_7_PriorityInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_7_PriorityInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <potentialOwner>
-        <resourceAssignmentExpression>
-          <formalExpression>user</formalExpression>
-        </resourceAssignmentExpression>
-      </potentialOwner>
-    </userTask>
+    <scriptTask id="_7" name="Do Your Job!" />
 
     <!-- connections -->
     <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
@@ -140,73 +80,73 @@ errorList.add("Invalid input data!");</script>
         <dc:Bounds x="16" y="127" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_2" >
-        <dc:Bounds x="96" y="16" width="320" height="271" />
+        <dc:Bounds x="96" y="16" width="285" height="248" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_2-1" >
-        <dc:Bounds x="199" y="55" width="48" height="48" />
+        <dc:Bounds x="164" y="44" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_2-2" >
-        <dc:Bounds x="320" y="53" width="48" height="48" />
+        <dc:Bounds x="288" y="51" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_2-3" >
-        <dc:Bounds x="332" y="135" width="48" height="48" />
+        <dc:Bounds x="288" y="131" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_2-4" >
-        <dc:Bounds x="338" y="214" width="48" height="48" />
+        <dc:Bounds x="289" y="201" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_2-5" >
-        <dc:Bounds x="150" y="138" width="157" height="48" />
+        <dc:Bounds x="111" y="132" width="157" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_3" >
-        <dc:Bounds x="580" y="127" width="48" height="48" />
+        <dc:Bounds x="558" y="154" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_4" >
-        <dc:Bounds x="196" y="273" width="48" height="48" />
+        <dc:Bounds x="18" y="274" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_5" >
-        <dc:Bounds x="58" y="346" width="320" height="48" />
+        <dc:Bounds x="81" y="275" width="320" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_6" >
-        <dc:Bounds x="475" y="345" width="48" height="48" />
+        <dc:Bounds x="432" y="278" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_7" >
-        <dc:Bounds x="448" y="127" width="128" height="48" />
+        <dc:Bounds x="428" y="155" width="107" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="_2-3-_2-2" >
-        <di:waypoint x="260" y="143" />
-        <di:waypoint x="248" y="61" />
+        <di:waypoint x="216" y="139" />
+        <di:waypoint x="216" y="59" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_2-5-_2-3" >
-        <di:waypoint x="132" y="146" />
-        <di:waypoint x="260" y="143" />
+        <di:waypoint x="93" y="140" />
+        <di:waypoint x="216" y="139" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_2-3-_2-4" >
-        <di:waypoint x="260" y="143" />
-        <di:waypoint x="266" y="222" />
+        <di:waypoint x="216" y="139" />
+        <di:waypoint x="217" y="209" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_2-1-_2-5" >
-        <di:waypoint x="127" y="63" />
-        <di:waypoint x="132" y="146" />
+        <di:waypoint x="92" y="52" />
+        <di:waypoint x="93" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_1-_2" >
         <di:waypoint x="40" y="151" />
-        <di:waypoint x="256" y="151" />
+        <di:waypoint x="238" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_7-_3" >
-        <di:waypoint x="512" y="151" />
-        <di:waypoint x="604" y="151" />
+        <di:waypoint x="481" y="179" />
+        <di:waypoint x="582" y="178" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_4-_5" >
-        <di:waypoint x="220" y="297" />
-        <di:waypoint x="218" y="370" />
+        <di:waypoint x="42" y="298" />
+        <di:waypoint x="241" y="299" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_5-_6" >
-        <di:waypoint x="218" y="370" />
-        <di:waypoint x="499" y="369" />
+        <di:waypoint x="241" y="299" />
+        <di:waypoint x="456" y="302" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_2-_7" >
-        <di:waypoint x="256" y="151" />
-        <di:waypoint x="512" y="151" />
+        <di:waypoint x="238" y="140" />
+        <di:waypoint x="481" y="179" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -64,7 +64,7 @@ public class UserGroupsProcessTest extends BaseTest implements Serializable {
     } 
     
     @Test
-    public void delegationOfUnclaimedTaskTest() throws InterruptedException{
+    public void taskGroupTest() throws InterruptedException{
         //These is the list of groups where krsiv belongs. jBPM5 doesn't define
         //any relation between users and groups. It is the responsability of 
         //API's users to make these relations when calling HT Client methods. 

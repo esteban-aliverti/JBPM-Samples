@@ -31,6 +31,7 @@ import javax.persistence.Persistence;
 import org.drools.SystemEventListenerFactory;
 import org.jbpm.task.Group;
 import org.jbpm.task.User;
+import org.jbpm.task.service.EscalatedDeadlineHandler;
 import org.jbpm.task.service.SendIcal;
 import org.jbpm.task.service.TaskClient;
 import org.jbpm.task.service.TaskServer;
@@ -57,12 +58,16 @@ public abstract class BaseTest {
     
     protected TaskServer server;
     protected TaskClient client;
+    
+    protected MockUserInfo userInfo;
+    
+    protected Properties conf;
 
     @Before
     public void setUp() throws Exception {
-        Properties conf = new Properties();
+        conf = new Properties();
         conf.setProperty("mail.smtp.host", "localhost");
-        conf.setProperty("mail.smtp.port", "2345");
+        conf.setProperty("mail.smtp.port", "1125");
         conf.setProperty("from", "from@domain.com");
         conf.setProperty("replyTo", "replyTo@domain.com");
         conf.setProperty("defaultLanguage", "en-UK");
@@ -71,20 +76,11 @@ public abstract class BaseTest {
         // Use persistence.xml configuration
         emf = Persistence.createEntityManagerFactory("org.jbpm.task");
 
-        taskService = new TaskService(emf, SystemEventListenerFactory.getSystemEventListener());
-        taskSession = taskService.createSession();
-        MockUserInfo userInfo = new MockUserInfo();
-        taskService.setUserinfo(userInfo);
-        Map vars = new HashMap();
-
         Reader reader = null;
-
+        Map vars = new HashMap();
         try {
             reader = new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("LoadUsers.mvel"));
             users = (Map<String, User>) eval(reader, vars);
-            for (User user : users.values()) {
-                taskSession.addUser(user);
-            }
         } finally {
             if (reader != null) reader.close();
             reader = null;
@@ -93,11 +89,23 @@ public abstract class BaseTest {
         try {
             reader = new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("LoadGroups.mvel"));
             groups = (Map<String, Group>) eval(reader,  vars);
-            for (Group group : groups.values()) {
-                taskSession.addGroup(group);
-            }
         } finally {
             if (reader != null) reader.close();
+        }
+        
+        userInfo = new MockUserInfo();
+        
+        taskService = new TaskService(emf, SystemEventListenerFactory.getSystemEventListener(),this.getEscalatedDeadlineHandler());
+        taskSession = taskService.createSession();
+        
+        taskService.setUserinfo(userInfo);
+
+        for (User user : users.values()) {
+            taskSession.addUser(user);
+        }
+        
+        for (Group group : groups.values()) {
+            taskSession.addGroup(group);
         }
         
         server = new MinaTaskServer(taskService);
@@ -161,5 +169,10 @@ public abstract class BaseTest {
 
         vars.put("now", new Date());
         return MVEL.executeExpression(compiler.compile(context), vars);
+    }
+    
+    public EscalatedDeadlineHandler getEscalatedDeadlineHandler(){
+        //by default, do not provide any handler
+        return null;
     }
 }

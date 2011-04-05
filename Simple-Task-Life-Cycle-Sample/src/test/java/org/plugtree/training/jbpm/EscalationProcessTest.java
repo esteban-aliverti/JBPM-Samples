@@ -91,7 +91,7 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
     public void taskEscalationTest() throws InterruptedException, MessagingException, IOException{
         Map<String,Object> parameters = new HashMap<String, Object>();
         parameters.put("Task_A_Deadline_Time", 3000L); 
-        parameters.put("Task_A_Deadline_Notification_Recipients", "Tony Stark,john"); 
+        parameters.put("Task_A_Deadline_Notification_Recipients", "Steve Rogers,Bruce Wayne"); 
         parameters.put("Task_A_Deadline_Reassignment_Potential_Owners", "Steve Rogers,Bruce Wayne"); 
         
         //Start the process using its id

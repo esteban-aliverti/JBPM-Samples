@@ -236,8 +236,8 @@ public class DeadlineEnabledWSHumanTaskHandler implements WorkItemHandler {
                 EmailNotification notification = new EmailNotification();
                 
                 //Recipients
-                String[] deadlineReassignments = deadlineReassignment.trim().split(",");
-                for (String r : deadlineReassignments) {
+                String[] notificationRecipients = deadlineNotificationRecipients.trim().split(",");
+                for (String r : notificationRecipients) {
                     recipientsEntities.add(new User(r.trim()));
                 }
                 notification.setRecipients(recipientsEntities);

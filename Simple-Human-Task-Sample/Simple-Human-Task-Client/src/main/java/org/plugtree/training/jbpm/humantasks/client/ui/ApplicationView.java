@@ -36,10 +36,10 @@ public class ApplicationView extends FrameView {
     private Map<String, User> users = new HashMap<String, User>();
     private DefaultListModel pendingTaskListModel;
     private Map<String, TaskSummary> tasks = new HashMap<String, TaskSummary>();
-
+    
     public ApplicationView(SingleFrameApplication app) {
         super(app);
-
+ 
         initComponents();
 
         MouseListener mouseListener = new MouseAdapter() {
@@ -56,7 +56,6 @@ public class ApplicationView extends FrameView {
         usersList.addMouseListener(mouseListener);
 
         initializeUsers();
-
         pendingTaskListModel = new DefaultListModel();
         pendingTasksList.setModel(pendingTaskListModel);
 
@@ -70,7 +69,7 @@ public class ApplicationView extends FrameView {
         }
 
     }
-
+    
     @Action
     public void showAboutBox() {
         if (aboutBox == null) {
@@ -95,6 +94,7 @@ public class ApplicationView extends FrameView {
         usersList = new javax.swing.JList();
         startProcessButton = new javax.swing.JButton();
         completeTaskButton = new javax.swing.JButton();
+        reportsButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         pendingTasksList = new javax.swing.JList();
         pendingTasksLabel = new javax.swing.JLabel();
@@ -112,13 +112,17 @@ public class ApplicationView extends FrameView {
         jScrollPane1.setViewportView(usersList);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.plugtree.training.jbpm.humantasks.client.ui.Application.class).getContext().getActionMap(ApplicationView.class, this);
-        startProcessButton.setAction(actionMap.get("startProcessAction")); // NOI18N
+        startProcessButton.setAction(actionMap.get("startWorkAction")); // NOI18N
         startProcessButton.setName("startProcessButton"); // NOI18N
         startProcessButton.setText("Start Process");
         
+        reportsButton.setAction(actionMap.get("reportsAction")); // NOI18N
+        reportsButton.setName("Reports"); // NOI18N
+        reportsButton.setText("Reports");
+        
         completeTaskButton.setAction(actionMap.get("completeTaskAction")); // NOI18N
         completeTaskButton.setName("completeTaskButton"); // NOI18N
-		completeTaskButton.setText("Complete Task");
+		completeTaskButton.setText("Work!");
 		completeTaskButton.setEnabled(false);
         
         pendingTasksLabel.setText("Pending Tasks:");
@@ -148,6 +152,7 @@ public class ApplicationView extends FrameView {
                         .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(pendingTasksLabel)
                             .add(startProcessButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 151, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(reportsButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 151, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(completeTaskButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 151, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .add(31, 31, 31))
         );
@@ -160,6 +165,8 @@ public class ApplicationView extends FrameView {
                     .add(mainPanelLayout.createSequentialGroup()
                         .add(startProcessButton)
                         .add(8, 8, 8)
+                        .add(reportsButton)
+                    	.add(9,9,9)
                         .add(pendingTasksLabel)
                         .add(18, 18, 18)
                         .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 183, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -207,14 +214,22 @@ public class ApplicationView extends FrameView {
     }
     
     @Action
-    public void completeTaskAction() {
+    public void reportsAction() {
+    	ReportDialog dialog = new ReportDialog(this.getFrame());
+    	dialog.setVisible(true);
+    	dialog.setModal(true);
+    }
+
+    @Action
+    public void startWorkAction() {
         String taskKey = (String) pendingTasksList.getSelectedValue();
         TaskSummary task = tasks.get(taskKey);
         String userKey = (String) usersList.getSelectedValue();
         System.out.println("complete task user: " + userKey);
         User user = users.get(userKey);
-        client.completeTask(user, task);
-        JOptionPane.showMessageDialog(null, "Task Completed.\nName: " + task.getName() + "\nID: " + task.getId() , "Information", JOptionPane.INFORMATION_MESSAGE);
+        WriteDocumentDialog frame = new WriteDocumentDialog(this.getFrame(), task, user, client, null);
+        frame.setModal(true);
+        frame.setVisible(true);
         refreshUserAssignedTasks(user.getId());
     }
 
@@ -227,6 +242,7 @@ public class ApplicationView extends FrameView {
     private javax.swing.JList pendingTasksList;
     private javax.swing.JButton startProcessButton;
     private javax.swing.JButton completeTaskButton;
+    private javax.swing.JButton reportsButton;
     private javax.swing.JList usersList;
     // End of variables declaration//GEN-END:variables
 

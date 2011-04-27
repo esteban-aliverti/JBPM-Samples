@@ -12,13 +12,19 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
+  <itemDefinition id="_approval.documentItem" structureRef="String" />
+  <itemDefinition id="_approval.translatedDocumentItem" structureRef="String" />
+  <itemDefinition id="_approval.reviewCommentItem" structureRef="String" />
+
   <process processType="Private" isExecutable="true" id="org.plugtree.training.jbpm.humantasks.client" name="Sample Human Task" tns:packageName="org.plugtree.training.jbpm.humantasks.client" >
+
+    <!-- process variables -->
+    <property id="approval.document" itemSubjectRef="_approval.documentItem"/>
+    <property id="approval.translatedDocument" itemSubjectRef="_approval.translatedDocumentItem"/>
+    <property id="approval.reviewComment" itemSubjectRef="_approval.reviewCommentItem"/>
 
     <!-- nodes -->
     <startEvent id="_1" name="Start" />
-    <endEvent id="_7" name="End" >
-        <terminateEventDefinition/>
-    </endEvent>
     <userTask id="_8" name="Write Document" >
       <ioSpecification>
         <dataInput id="_8_CommentInput" name="Comment" />
@@ -26,6 +32,7 @@
         <dataInput id="_8_ContentInput" name="Content" />
         <dataInput id="_8_TaskNameInput" name="TaskName" />
         <dataInput id="_8_PriorityInput" name="Priority" />
+        <dataOutput id="_8_DocumentOutput" name="Result" />
         <inputSet>
           <dataInputRefs>_8_CommentInput</dataInputRefs>
           <dataInputRefs>_8_SkippableInput</dataInputRefs>
@@ -34,6 +41,7 @@
           <dataInputRefs>_8_PriorityInput</dataInputRefs>
         </inputSet>
         <outputSet>
+          <dataOutputRefs>_8_DocumentOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
       <dataInputAssociation>
@@ -71,6 +79,10 @@
           <to xsi:type="tFormalExpression">_8_PriorityInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_8_DocumentOutput</sourceRef>
+        <targetRef>approval.document</targetRef>
+      </dataOutputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
           <formalExpression>salaboy</formalExpression>
@@ -84,6 +96,7 @@
         <dataInput id="_9_ContentInput" name="Content" />
         <dataInput id="_9_TaskNameInput" name="TaskName" />
         <dataInput id="_9_PriorityInput" name="Priority" />
+        <dataOutput id="_9_DocumentOutput" name="Result" />
         <inputSet>
           <dataInputRefs>_9_CommentInput</dataInputRefs>
           <dataInputRefs>_9_SkippableInput</dataInputRefs>
@@ -92,6 +105,7 @@
           <dataInputRefs>_9_PriorityInput</dataInputRefs>
         </inputSet>
         <outputSet>
+        	<dataOutputRefs>_9_DocumentOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
       <dataInputAssociation>
@@ -111,7 +125,7 @@
       <dataInputAssociation>
         <targetRef>_9_ContentInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression"></from>
+          <from xsi:type="tFormalExpression">#{approval.document}</from>
           <to xsi:type="tFormalExpression">_9_ContentInput</to>
         </assignment>
       </dataInputAssociation>
@@ -129,6 +143,10 @@
           <to xsi:type="tFormalExpression">_9_PriorityInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_9_DocumentOutput</sourceRef>
+        <targetRef>approval.translatedDocument</targetRef>
+      </dataOutputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
           <formalExpression>translator</formalExpression>
@@ -142,6 +160,7 @@
         <dataInput id="_10_ContentInput" name="Content" />
         <dataInput id="_10_TaskNameInput" name="TaskName" />
         <dataInput id="_10_PriorityInput" name="Priority" />
+        <dataOutput id="_10_ReviewOutput" name="Result" />
         <inputSet>
           <dataInputRefs>_10_CommentInput</dataInputRefs>
           <dataInputRefs>_10_SkippableInput</dataInputRefs>
@@ -150,6 +169,7 @@
           <dataInputRefs>_10_PriorityInput</dataInputRefs>
         </inputSet>
         <outputSet>
+        <dataOutputRefs>_10_ReviewOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
       <dataInputAssociation>
@@ -169,7 +189,7 @@
       <dataInputAssociation>
         <targetRef>_10_ContentInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression"></from>
+          <from xsi:type="tFormalExpression">#{approval.document}</from>
           <to xsi:type="tFormalExpression">_10_ContentInput</to>
         </assignment>
       </dataInputAssociation>
@@ -187,6 +207,10 @@
           <to xsi:type="tFormalExpression">_10_PriorityInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_10_ReviewOutput</sourceRef>
+        <targetRef>approval.reviewComment</targetRef>
+      </dataOutputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
           <formalExpression>reviewer</formalExpression>
@@ -196,69 +220,46 @@
     <parallelGateway id="_11" name="Gateway" gatewayDirection="Diverging" />
     <parallelGateway id="_12" name="Gateway" gatewayDirection="Converging" />
 
+<task id="_14" name="Report" tns:taskName="Report" >
+      <ioSpecification>
+          <dataInput id="_14_Document" name="Document" />
+          <dataInput id="_14_TranslatedDocument" name="TranslatedDocument" />
+          <dataInput id="_14_ReviewComment" name="ReviewComment" />
+        <inputSet>
+          <dataInputRefs>_14_Document</dataInputRefs>
+          <dataInputRefs>_14_TranslatedDocument</dataInputRefs>
+          <dataInputRefs>_14_ReviewComment</dataInputRefs>
+        </inputSet>
+        <outputSet>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>approval.document</sourceRef>
+        <targetRef>_14_Document</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <sourceRef>approval.translatedDocument</sourceRef>
+        <targetRef>_14_TranslatedDocument</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <sourceRef>approval.reviewComment</sourceRef>
+        <targetRef>_14_ReviewComment</targetRef>
+      </dataInputAssociation>
+    </task>
+
+    <endEvent id="_7" name="End" >
+        <terminateEventDefinition/>
+    </endEvent>
+    
     <!-- connections -->
-    <sequenceFlow id="_12-_7" sourceRef="_12" targetRef="_7" />
+    <sequenceFlow id="_14-_7" sourceRef="_14" targetRef="_7" />
     <sequenceFlow id="_1-_8" sourceRef="_1" targetRef="_8" />
     <sequenceFlow id="_11-_9" sourceRef="_11" targetRef="_9" />
     <sequenceFlow id="_11-_10" sourceRef="_11" targetRef="_10" />
-    <sequenceFlow id="_8-_11" sourceRef="_8" targetRef="_11" />
     <sequenceFlow id="_9-_12" sourceRef="_9" targetRef="_12" />
     <sequenceFlow id="_10-_12" sourceRef="_10" targetRef="_12" />
-
+    <sequenceFlow id="_8-_11" sourceRef="_8" targetRef="_11" />
+  <sequenceFlow id="_12-_14" sourceRef="_12" targetRef="_14" />
   </process>
-
-  <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="org.plugtree.training.jbpm.humantasks.client" >
-      <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="16" y="56" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_7" >
-        <dc:Bounds x="642" y="56" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_8" >
-        <dc:Bounds x="96" y="56" width="150" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_9" >
-        <dc:Bounds x="359" y="16" width="170" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_10" >
-        <dc:Bounds x="359" y="96" width="170" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_11" >
-        <dc:Bounds x="278" y="56" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_12" >
-        <dc:Bounds x="561" y="56" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_12-_7" >
-        <di:waypoint x="585" y="80" />
-        <di:waypoint x="666" y="80" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_1-_8" >
-        <di:waypoint x="40" y="80" />
-        <di:waypoint x="171" y="80" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_11-_9" >
-        <di:waypoint x="302" y="80" />
-        <di:waypoint x="444" y="40" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_11-_10" >
-        <di:waypoint x="302" y="80" />
-        <di:waypoint x="444" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_8-_11" >
-        <di:waypoint x="171" y="80" />
-        <di:waypoint x="302" y="80" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_9-_12" >
-        <di:waypoint x="444" y="40" />
-        <di:waypoint x="585" y="80" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_10-_12" >
-        <di:waypoint x="444" y="120" />
-        <di:waypoint x="585" y="80" />
-      </bpmndi:BPMNEdge>
-    </bpmndi:BPMNPlane>
-  </bpmndi:BPMNDiagram>
-
+  
 </definitions>

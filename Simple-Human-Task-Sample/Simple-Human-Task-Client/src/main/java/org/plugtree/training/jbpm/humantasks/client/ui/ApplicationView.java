@@ -112,7 +112,7 @@ public class ApplicationView extends FrameView {
         jScrollPane1.setViewportView(usersList);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.plugtree.training.jbpm.humantasks.client.ui.Application.class).getContext().getActionMap(ApplicationView.class, this);
-        startProcessButton.setAction(actionMap.get("startWorkAction")); // NOI18N
+        startProcessButton.setAction(actionMap.get("startProcessAction")); // NOI18N
         startProcessButton.setName("startProcessButton"); // NOI18N
         startProcessButton.setText("Start Process");
         
@@ -120,8 +120,8 @@ public class ApplicationView extends FrameView {
         reportsButton.setName("Reports"); // NOI18N
         reportsButton.setText("Reports");
         
-        completeTaskButton.setAction(actionMap.get("completeTaskAction")); // NOI18N
-        completeTaskButton.setName("completeTaskButton"); // NOI18N
+        completeTaskButton.setAction(actionMap.get("startWorkAction")); // NOI18N
+        completeTaskButton.setName("startWorkAction"); // NOI18N
 		completeTaskButton.setText("Work!");
 		completeTaskButton.setEnabled(false);
         

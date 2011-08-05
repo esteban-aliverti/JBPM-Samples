@@ -145,7 +145,7 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
         client.claim(stevesTask.getId(), "Steve Rogers", operationResponseHandler );
         operationResponseHandler.waitTillDone(waitTime);
         
-        //tony completes the task
+        //steve completes the task
         operationResponseHandler = new BlockingTaskOperationResponseHandler();
         client.start(stevesTask.getId(), "Steve Rogers", operationResponseHandler);
         operationResponseHandler.waitTillDone(waitTime);

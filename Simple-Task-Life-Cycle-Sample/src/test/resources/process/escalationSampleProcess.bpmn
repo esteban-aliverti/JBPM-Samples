@@ -79,7 +79,7 @@
           <to xsi:type="tFormalExpression">_3_SkippableInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+   <dataInputAssociation>
         <targetRef>_3_ContentInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression"></from>

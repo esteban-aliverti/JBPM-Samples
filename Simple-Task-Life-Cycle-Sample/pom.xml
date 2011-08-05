@@ -93,6 +93,13 @@
             <artifactId>h2</artifactId>
             <version>1.2.139</version>
         </dependency>
+        <dependency>
+            <groupId>org.subethamail</groupId>
+            <artifactId>subethasmtp</artifactId>
+            <version>3.1.4</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,7 +134,7 @@
     </repositories>
     
     <properties>
-        <jbpm.version>5.0.0</jbpm.version>
+        <jbpm.version>5.1-SNAPSHOT</jbpm.version>
     </properties>
 
 </project>

@@ -2,3 +2,14 @@ target
 .classpath
 .project
 .settings
+/Simple-Task-Life-Cycle-Sample/.settings/
+/Simple-Swimlane-Sample/.settings/
+/Simple-SubProcess-Sample/.settings/
+/Simple-Process-Sample/.settings/
+/Simple-Event-Samples/.settings/
+/Multiple-Instance-Node-Samples/.settings/
+/Simple-Human-Task-Sample/Simple-Human-Task-Client/.settings/
+/Simple-Human-Task-Sample/Simple-Human-Task-Server/.settings/
+/Simple-WorkItem-Sample/.settings/
+.tlog
+.db

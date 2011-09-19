@@ -127,7 +127,7 @@
     </repositories>
     
     <properties>
-        <jbpm.version>5.0.0</jbpm.version>
+        <jbpm.version>5.2.0-SNAPSHOT</jbpm.version>
     </properties>
 
 </project>

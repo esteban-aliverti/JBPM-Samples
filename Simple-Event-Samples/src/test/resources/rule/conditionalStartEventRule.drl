@@ -1,0 +1,5 @@
+package org.plugtree.training.jbpm;
+
+import java.util.List;
+
+global List executionHistory;

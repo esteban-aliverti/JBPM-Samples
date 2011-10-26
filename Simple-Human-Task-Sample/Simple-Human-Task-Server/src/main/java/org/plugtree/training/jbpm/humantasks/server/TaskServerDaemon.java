@@ -25,7 +25,7 @@ public class TaskServerDaemon {
         if(isRunning())
             throw new IllegalStateException("Server is already started");
         this.running = true;
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("org.drools.task");
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("org.jbpm.task");
         TaskService taskService = new TaskService(entityManagerFactory, SystemEventListenerFactory.getSystemEventListener());
         TaskServiceSession taskSession = taskService.createSession() ;
         MockUserInfo userInfo = new MockUserInfo();

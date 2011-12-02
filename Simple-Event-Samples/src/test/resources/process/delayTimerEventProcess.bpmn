@@ -12,10 +12,13 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
-  <itemDefinition id="_timeBeforeTimerItem" structureRef="java.lang.Long" />
-  <itemDefinition id="_timerExecutionTimeItem" structureRef="java.lang.Long" />
+  <itemDefinition id="_timeBefore" structureRef="java.lang.Long" />
+  <itemDefinition id="_timeExecution" structureRef="java.lang.Long" />
 
-  <process processType="Private" isExecutable="true" id="org.plugtree.training.jbpm.delaytimereventprocess" name="delayTimerEventProcess.b" tns:packageName="org.plugtree.training.jbpm" >
+  <process processType="Private" isExecutable="true" 
+           id="org.plugtree.training.jbpm.delaytimereventprocess" 
+           name="delayTimerEventProcess.b" 
+           tns:packageName="org.plugtree.training.jbpm" >
 
     <!-- process variables -->
     <property id="timeBeforeTimer" itemSubjectRef="_timeBeforeTimerItem"/>
@@ -24,21 +27,27 @@
     <!-- nodes -->
     <startEvent id="_1" name="Start" />
     <endEvent id="_2" name="End" >
-        <terminateEventDefinition/>
+    <terminateEventDefinition/>
     </endEvent>
-    <scriptTask id="_3" name="After Timer" scriptFormat="http://www.java.com/java" >
-      <script>System.out.println("After Timer");
-timerExecutionTime = System.currentTimeMillis() - timeBeforeTimer;</script>
-    </scriptTask>
-    <intermediateCatchEvent id="_4" name="Timer" >
-      <timerEventDefinition>
-        <timeCycle>10000</timeCycle>
-      </timerEventDefinition>
-    </intermediateCatchEvent>
+    
     <scriptTask id="_5" name="Before Timer" scriptFormat="http://www.java.com/java" >
       <script>System.out.println("Before Timer");
-timeBeforeTimer= System.currentTimeMillis();</script>
+timeBeforeTimer = System.currentTimeMillis();
+kcontext.setVariable("timeBeforeTimer", timeBeforeTimer);</script>
     </scriptTask>
+
+    <intermediateCatchEvent id="_4" name="Timer" >
+      <timerEventDefinition>
+        <timeCycle>2000</timeCycle>
+      </timerEventDefinition>
+    </intermediateCatchEvent>
+
+    <scriptTask id="_3" name="After Timer" scriptFormat="http://www.java.com/java" >
+      <script>System.out.println("After Timer");
+timerExecutionTime = System.currentTimeMillis() - (Long) timeBeforeTimer;
+kcontext.setVariable("timerExecutionTime", timerExecutionTime);</script>
+    </scriptTask>
+ 
 
     <!-- connections -->
     <sequenceFlow id="_3-_2" sourceRef="_3" targetRef="_2" />

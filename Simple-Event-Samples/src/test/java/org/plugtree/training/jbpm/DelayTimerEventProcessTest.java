@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *
@@ -52,20 +53,23 @@ public class DelayTimerEventProcessTest {
         }
     } 
     
-    @Ignore("JBPM5 bug? Process stays in ACTIVE state. End Event node is never executed!")
+    @Test
     public void delayTimerEventProcessTest() throws InterruptedException{
         //Start the process using its id
         ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.delaytimereventprocess");
         
         Assert.assertEquals(ProcessInstance.STATE_ACTIVE, process.getState());
-        
-        Thread.sleep(15000);
+       
+        int sleep = 5000;
+        System.out.println("Sleeping " + sleep/1000 + " seconds." );
+        Thread.sleep(sleep);
+        System.out.println("Awake!");
         
         //The process continues until it reaches the end node
         Assert.assertEquals(ProcessInstance.STATE_COMPLETED, process.getState());
         
         Long timerExecutionTime = (Long) ((WorkflowProcessInstance)process).getVariable("timerExecutionTime");
-        Assert.assertTrue(timerExecutionTime >= 10000);
+        Assert.assertTrue(timerExecutionTime >= 2000);
         
     }
     

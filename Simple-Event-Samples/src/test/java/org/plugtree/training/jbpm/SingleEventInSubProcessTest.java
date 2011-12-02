@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  * @author esteban
  */
-public class SingleEventProcessTest {
+public class SingleEventInSubProcessTest {
 
     private KnowledgeRuntimeLogger fileLogger;
     private StatefulKnowledgeSession ksession;

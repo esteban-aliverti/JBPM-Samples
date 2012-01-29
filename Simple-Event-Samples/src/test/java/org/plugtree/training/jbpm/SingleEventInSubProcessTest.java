@@ -23,10 +23,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- *
+ * Test that proves that you can signal events inside sub-processes using
+ * broadcast signalEvent()
  * @author esteban
  */
-public class SingleEventProcessTest {
+public class SingleEventInSubProcessTest {
 
     private KnowledgeRuntimeLogger fileLogger;
     private StatefulKnowledgeSession ksession;
@@ -54,7 +55,7 @@ public class SingleEventProcessTest {
     @Test
     public void simpleProcessTest(){
         //Start the process using its id
-        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.singleeventprocess");
+        ProcessInstance process = ksession.startProcess("org.plugtree.training.jbpm.singleeventprocess-parent");
         
         //The process is in the gateway waiting for the event
         Assert.assertEquals(ProcessInstance.STATE_ACTIVE, process.getState());
@@ -75,7 +76,8 @@ public class SingleEventProcessTest {
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 
         //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("process/singleEventProcess.bpmn"), ResourceType.BPMN2);
+        kbuilder.add(new ClassPathResource("process/singleEventProcess-Parent.bpmn"), ResourceType.BPMN2);
+        kbuilder.add(new ClassPathResource("process/singleEventProcess-Child.bpmn"), ResourceType.BPMN2);
         System.out.println("Compiling resources");
         
         //Check for errors

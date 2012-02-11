@@ -35,6 +35,7 @@ public class TaskServerDaemon {
             taskSession.addUser(new User(userName));
         }
         
+	System.out.println("Starting Human Task Server");
         taskServer = new MinaTaskServer(taskService);
         Thread thread = new Thread(taskServer);
         thread.start();

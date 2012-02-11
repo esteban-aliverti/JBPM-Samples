@@ -33,13 +33,9 @@ import org.jbpm.task.Group;
 import org.jbpm.task.User;
 import org.jbpm.task.service.EscalatedDeadlineHandler;
 import org.jbpm.task.service.SendIcal;
-import org.jbpm.task.service.TaskClient;
-import org.jbpm.task.service.TaskServer;
 import org.jbpm.task.service.TaskService;
 import org.jbpm.task.service.TaskServiceSession;
-import org.jbpm.task.service.mina.MinaTaskClientConnector;
-import org.jbpm.task.service.mina.MinaTaskClientHandler;
-import org.jbpm.task.service.mina.MinaTaskServer;
+import org.jbpm.task.service.local.LocalTaskService;
 import org.junit.After;
 import org.junit.Before;
 import org.mvel2.MVEL;
@@ -54,15 +50,15 @@ public abstract class BaseTest {
     protected Map<String, Group> groups;
 
     protected TaskService taskService;
-    protected TaskServiceSession taskSession;
+    protected LocalTaskService localTaskService;
     
-    protected TaskServer server;
-    protected TaskClient client;
+    protected TaskServiceSession taskSession;
     
     protected MockUserInfo userInfo;
     
     protected Properties conf;
 
+    
     @Before
     public void setUp() throws Exception {
         conf = new Properties();
@@ -107,34 +103,21 @@ public abstract class BaseTest {
         for (Group group : groups.values()) {
             taskSession.addGroup(group);
         }
-        
-        server = new MinaTaskServer(taskService);
-        Thread thread = new Thread(server);
-        thread.start();
-        System.out.println("Waiting for the MinaTask Server to come up");
-        while (!server.isRunning()) {
-        	System.out.print(".");
-        	Thread.sleep( 50 );
-        }
-
-        client = new TaskClient(new MinaTaskClientConnector("client 1",
-                                     new MinaTaskClientHandler(SystemEventListenerFactory.getSystemEventListener())));
-        client.connect("127.0.0.1", 9123);
+ 
+        localTaskService = new LocalTaskService(taskSession);
     }
 
     @After
     public void tearDown() throws Exception {
-        System.out.println("Disconnectig client");
-        client.disconnect();
+        
+        System.out.println("Disposing Local Task Service session");
+        localTaskService.disconnect();
         
         System.out.println("Disposing session");
         taskSession.dispose();
         emf.close();
         
-        System.out.println("Stopping server");
-        server.stop();
-        
-        Thread.sleep(5000);
+        Thread.sleep(1000);
     }
 
     public Object eval(Reader reader,

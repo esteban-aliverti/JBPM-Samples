@@ -20,10 +20,9 @@ import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
+import org.jbpm.process.workitem.wsht.SyncWSHumanTaskHandler;
 import org.jbpm.process.workitem.wsht.WSHumanTaskHandler;
 import org.jbpm.task.query.TaskSummary;
-import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
-import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +36,7 @@ public class UserGroupsProcessTest extends BaseTest implements Serializable {
 
     private KnowledgeRuntimeLogger fileLogger;
     private StatefulKnowledgeSession ksession;
-    private long waitTime = 1000;
+    private SyncWSHumanTaskHandler humanTaskHandler;
     
     @Before
     public void setup() throws IOException{
@@ -51,8 +50,12 @@ public class UserGroupsProcessTest extends BaseTest implements Serializable {
         System.out.println("Log file= "+logFile.getAbsolutePath()+".log");
         fileLogger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession,logFile.getAbsolutePath());
         
-        //Configure WIHandler for Human Tasks
-        this.ksession.getWorkItemManager().registerWorkItemHandler("Human Task", new WSHumanTaskHandler());
+        //Configure Sync WIHandler for Human Tasks
+        humanTaskHandler = new SyncWSHumanTaskHandler(localTaskService, ksession);
+        humanTaskHandler.setLocal(true);
+        humanTaskHandler.connect();
+        
+        this.ksession.getWorkItemManager().registerWorkItemHandler("Human Task", humanTaskHandler);
         
     }
 
@@ -80,35 +83,25 @@ public class UserGroupsProcessTest extends BaseTest implements Serializable {
         
         //krisv doesn't have a task for itself. (see the definition of
         //the porcess)
-        BlockingTaskSummaryResponseHandler responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("krisv", "en-UK", responseHandler);
-        List<TaskSummary> results = responseHandler.getResults();
+        List<TaskSummary> results = localTaskService.getTasksAssignedAsPotentialOwner("krisv", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
         
         //But if krisv is in GroupA, then he has 1 task (because the group has
-        //1 task). Here we are making the relation between user ris and group 
+        //1 task). Here we are making the relation between user kris and group 
         //GroupA
-        responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("krisv",groupIds, "en-UK", responseHandler);
-        results = responseHandler.getResults();
+        results = localTaskService.getTasksAssignedAsPotentialOwner("krisv",groupIds, "en-UK");
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
         TaskSummary krisvsTask = results.get(0);
         
         //krisv claims the task (always indicating the group)
-        BlockingTaskOperationResponseHandler operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.claim(krisvsTask.getId(), "Tony Stark", groupIds, operationResponseHandler );
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.claim(krisvsTask.getId(), "krisv", groupIds);
         
         //krisv completes the task. There is no need to specify the groups
-        //anymore because the ask is already claimed.
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.start(krisvsTask.getId(), "Tony Stark", operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.complete(krisvsTask.getId(), "Tony Stark", null, operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
+        //anymore because the task is already claimed.
+        localTaskService.start(krisvsTask.getId(), "krisv");
+        localTaskService.complete(krisvsTask.getId(), "krisv", null);
         
         Thread.sleep(5000);
         

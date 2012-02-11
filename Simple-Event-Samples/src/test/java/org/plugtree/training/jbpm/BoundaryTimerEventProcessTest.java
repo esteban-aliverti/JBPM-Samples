@@ -120,7 +120,7 @@ public class BoundaryTimerEventProcessTest {
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 
         //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("process/boundaryTimerProcess.xml"), ResourceType.BPMN2);
+        kbuilder.add(new ClassPathResource("process/boundaryTimerProcess.bpmn"), ResourceType.BPMN2);
         System.out.println("Compiling resources");
 
         //Check for errors

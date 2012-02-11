@@ -19,10 +19,8 @@ import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
-import org.jbpm.process.workitem.wsht.WSHumanTaskHandler;
+import org.jbpm.process.workitem.wsht.SyncWSHumanTaskHandler;
 import org.jbpm.task.query.TaskSummary;
-import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
-import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +35,7 @@ public class DelegationProcessTest extends BaseTest implements Serializable {
 
     private KnowledgeRuntimeLogger fileLogger;
     private StatefulKnowledgeSession ksession;
-    private long waitTime = 1000;
+    private SyncWSHumanTaskHandler humanTaskHandler;
     
     @Before
     public void setup() throws IOException{
@@ -51,13 +49,19 @@ public class DelegationProcessTest extends BaseTest implements Serializable {
         System.out.println("Log file= "+logFile.getAbsolutePath()+".log");
         fileLogger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession,logFile.getAbsolutePath());
         
-        //Configure WIHandler for Human Tasks
-        this.ksession.getWorkItemManager().registerWorkItemHandler("Human Task", new WSHumanTaskHandler());
+        //Configure Sync WIHandler for Human Tasks
+        humanTaskHandler = new SyncWSHumanTaskHandler(localTaskService, ksession);
+        humanTaskHandler.setLocal(true);
+        humanTaskHandler.connect();
+        
+        this.ksession.getWorkItemManager().registerWorkItemHandler("Human Task", humanTaskHandler);
         
     }
 
     @After
-    public void cleanup(){
+    public void cleanup() throws Exception{
+        humanTaskHandler.dispose();
+        
         if (this.fileLogger != null){
             this.fileLogger.close();
         }
@@ -75,30 +79,22 @@ public class DelegationProcessTest extends BaseTest implements Serializable {
         Thread.sleep(500);
         
         //krisv has one potencial task
-        BlockingTaskSummaryResponseHandler responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("krisv", "en-UK", responseHandler);
-        List<TaskSummary> results = responseHandler.getResults();
+        List<TaskSummary> results = localTaskService.getTasksAssignedAsPotentialOwner("krisv", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
         TaskSummary krisvsTask = results.get(0);
         
         //tony doesn't have any :(
-        responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("Tony Stark", "en-UK", responseHandler);
-        results = responseHandler.getResults();
+        results = localTaskService.getTasksAssignedAsPotentialOwner("Tony Stark", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
 
         //But, wait a minute... Krisv is on vacations! The task needs to be
         //delegated.
-        BlockingTaskOperationResponseHandler operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.delegate(krisvsTask.getId(), "krisv", "Tony Stark", operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.delegate(krisvsTask.getId(), "krisv", "Tony Stark");
         
         //Now, Tony owns the task
-        responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksOwned("Tony Stark", "en-UK", responseHandler);
-        results = responseHandler.getResults();
+        results = localTaskService.getTasksOwned("Tony Stark", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
         TaskSummary tonysTask = results.get(0);   
@@ -106,17 +102,11 @@ public class DelegationProcessTest extends BaseTest implements Serializable {
                
         
         //tony claims the task
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.claim(tonysTask.getId(), "Tony Stark", operationResponseHandler );
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.claim(tonysTask.getId(), "Tony Stark");
         
         //tony completes the task
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.start(tonysTask.getId(), "Tony Stark", operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.complete(tonysTask.getId(), "Tony Stark", null, operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.start(tonysTask.getId(), "Tony Stark");
+        localTaskService.complete(tonysTask.getId(), "Tony Stark", null);
         
         Thread.sleep(5000);
         
@@ -136,36 +126,25 @@ public class DelegationProcessTest extends BaseTest implements Serializable {
         Thread.sleep(500);
         
         //krisv has one potencial task
-        BlockingTaskSummaryResponseHandler responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("krisv", "en-UK", responseHandler);
-        List<TaskSummary> results = responseHandler.getResults();
+        List<TaskSummary> results = localTaskService.getTasksAssignedAsPotentialOwner("krisv", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
         TaskSummary krisvsTask = results.get(0);
         
         //tony doesn't have any :(
-        responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("Tony Stark", "en-UK", responseHandler);
-        results = responseHandler.getResults();
+        results = localTaskService.getTasksAssignedAsPotentialOwner("Tony Stark", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
         
         //tony claims the task
-        BlockingTaskOperationResponseHandler operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.claim(krisvsTask.getId(), "krisv", operationResponseHandler );
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.claim(krisvsTask.getId(), "krisv");
 
         //Some days later, krisv goes on vacation. All its tasks should be
         //delegated to Tony
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.delegate(krisvsTask.getId(), "krisv", "Tony Stark", operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.delegate(krisvsTask.getId(), "krisv", "Tony Stark");
         
         //Now, Tony owns the task
-        responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksOwned("Tony Stark", "en-UK", responseHandler);
-        results = responseHandler.getResults();
+        results = localTaskService.getTasksOwned("Tony Stark", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
         TaskSummary tonysTask = results.get(0);   
@@ -173,19 +152,13 @@ public class DelegationProcessTest extends BaseTest implements Serializable {
                
         
         //tony claims the task
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.claim(tonysTask.getId(), "Tony Stark", operationResponseHandler );
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.claim(tonysTask.getId(), "Tony Stark");
         
         //tony completes the task
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.start(tonysTask.getId(), "Tony Stark", operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.complete(tonysTask.getId(), "Tony Stark", null, operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.start(tonysTask.getId(), "Tony Stark");
+        localTaskService.complete(tonysTask.getId(), "Tony Stark", null);
         
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         
         //The process should be completed
         Assert.assertEquals(ProcessInstance.STATE_COMPLETED, process.getState());

@@ -26,16 +26,15 @@ import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
 import org.jbpm.task.OrganizationalEntity;
+import org.jbpm.task.Task;
 import org.jbpm.task.query.TaskSummary;
 import org.jbpm.task.service.DefaultEscalatedDeadlineHandler;
 import org.jbpm.task.service.EscalatedDeadlineHandler;
-import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
-import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.plugtree.training.jbpm.workitem.DeadlineEnabledWSHumanTaskHandler;
+import org.plugtree.training.jbpm.workitem.SyncDeadlineEnabledWSHumanTaskHandler;
 import org.subethamail.wiser.Wiser;
 
 /**
@@ -46,11 +45,11 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
 
     private KnowledgeRuntimeLogger fileLogger;
     private StatefulKnowledgeSession ksession;
-    private long waitTime = 1000;
     
     private Wiser wiser;
     
     private DefaultEscalatedDeadlineHandler defaultEscalatedDeadlineHandler;
+    private SyncDeadlineEnabledWSHumanTaskHandler humanTaskHandler;
     
     @Before
     public void setup() throws IOException{
@@ -64,8 +63,13 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
         System.out.println("Log file= "+logFile.getAbsolutePath()+".log");
         fileLogger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession,logFile.getAbsolutePath());
         
-        //Configure WIHandler for Human Tasks
-        this.ksession.getWorkItemManager().registerWorkItemHandler("Human Task", new DeadlineEnabledWSHumanTaskHandler());
+        //Configure Sync WIHandler for Human Tasks that supports deadlines
+        //(check its implementation)
+        humanTaskHandler = new SyncDeadlineEnabledWSHumanTaskHandler(localTaskService, ksession);
+        humanTaskHandler.setLocal(true);
+        humanTaskHandler.connect();
+        
+        this.ksession.getWorkItemManager().registerWorkItemHandler("Human Task", humanTaskHandler);
         
         ((DefaultEscalatedDeadlineHandler)this.getEscalatedDeadlineHandler()).setManager(this.ksession.getWorkItemManager());
         
@@ -102,9 +106,7 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
         Thread.sleep(500);
         
         //krisv has one potencial task
-        BlockingTaskSummaryResponseHandler responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("krisv", "en-UK", responseHandler);
-        List<TaskSummary> results = responseHandler.getResults();
+        List<TaskSummary> results = localTaskService.getTasksAssignedAsPotentialOwner("krisv", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 
@@ -114,13 +116,15 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
         Assert.assertTrue(wiser.getMessages().isEmpty());
         
         //No Reassignment yet
-        responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("Steve Rogers", "en-UK", responseHandler);
-        results = responseHandler.getResults();
+        results = localTaskService.getTasksAssignedAsPotentialOwner("Steve Rogers", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
-        
+       
+	System.out.println("Sleeping");
+ 
         Thread.sleep(10000);
+
+	System.out.println("Coming back");
         
         //3 Notifications
         Assert.assertTrue(wiser.getMessages().size() > 1);
@@ -132,28 +136,21 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
         Assert.assertEquals( "bruce.wayne@gmail.com", ((InternetAddress)msg.getRecipients( RecipientType.TO )[2]).getAddress() );
         
         //The task was Reassigned
-        responseHandler = new BlockingTaskSummaryResponseHandler();
-        client.getTasksAssignedAsPotentialOwner("Steve Rogers", "en-UK", responseHandler);
-        results = responseHandler.getResults();
-        Assert.assertNotNull(results);
+        results = localTaskService.getTasksAssignedAsPotentialOwner("Steve Rogers", "en-UK");
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
         TaskSummary stevesTask = results.get(0);
         
+        Task task = localTaskService.getTask(stevesTask.getId());
+        
         //steve claims the task
-        BlockingTaskOperationResponseHandler operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.claim(stevesTask.getId(), "Steve Rogers", operationResponseHandler );
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.claim(stevesTask.getId(), "Steve Rogers");
         
         //steve completes the task
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.start(stevesTask.getId(), "Steve Rogers", operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
-        operationResponseHandler = new BlockingTaskOperationResponseHandler();
-        client.complete(stevesTask.getId(), "Steve Rogers", null, operationResponseHandler);
-        operationResponseHandler.waitTillDone(waitTime);
+        localTaskService.start(stevesTask.getId(), "Steve Rogers");
+        localTaskService.complete(stevesTask.getId(), "Steve Rogers", null);
         
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         
         //The process should be completed
         Assert.assertEquals(ProcessInstance.STATE_COMPLETED, process.getState());

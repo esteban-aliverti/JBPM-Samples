@@ -131,6 +131,7 @@ public class SwimlaneProcessTest extends BaseTest implements Serializable {
         //At this point, the third task should be assigned to tony because
         //"Task A" and "Task C" are in the same swimlane
         //So, krisv doesn't have a task now
+        System.out.println("Lets see Krisv's tasks");
         responseHandler = new BlockingTaskSummaryResponseHandler();
         client.getTasksAssignedAsPotentialOwner("krisv", "en-UK", responseHandler);
         results = responseHandler.getResults();

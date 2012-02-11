@@ -1,118 +1,98 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<definitions id="Definition"
-             targetNamespace="http://www.jboss.org/drools"
-             typeLanguage="http://www.java.com/javaTypes"
-             expressionLanguage="http://www.mvel.org/2.0"
-             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
-             xmlns:g="http://www.jboss.org/drools/flow/gpd"
-             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-             xmlns:tns="http://www.jboss.org/drools">
-
-  <process processType="Private" isExecutable="true" id="org.plugtree.training.jbpm.sampleprocess" name="sampleProcess.b" tns:packageName="org.plugtree.training.jbpm" >
-
-    <!-- nodes -->
-    <startEvent id="_1" name="Start" />
-    <endEvent id="_2" name="End" >
-        <terminateEventDefinition/>
-    </endEvent>
-    <userTask id="_3" name="Task A" >
-      <ioSpecification>
-        <dataInput id="_3_CommentInput" name="Comment" />
-        <dataInput id="_3_SkippableInput" name="Skippable" />
-        <dataInput id="_3_ContentInput" name="Content" />
-        <dataInput id="_3_TaskNameInput" name="TaskName" />
-        <dataInput id="_3_GroupIdInput" name="GroupId" />
-        <dataInput id="_3_PriorityInput" name="Priority" />
-        <inputSet>
-          <dataInputRefs>_3_CommentInput</dataInputRefs>
-          <dataInputRefs>_3_SkippableInput</dataInputRefs>
-          <dataInputRefs>_3_ContentInput</dataInputRefs>
-          <dataInputRefs>_3_TaskNameInput</dataInputRefs>
-          <dataInputRefs>_3_GroupIdInput</dataInputRefs>
-          <dataInputRefs>_3_PriorityInput</dataInputRefs>
-        </inputSet>
-        <outputSet>
-        </outputSet>
-      </ioSpecification>
-      <dataInputAssociation>
-        <targetRef>_3_CommentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Task A</from>
-          <to xsi:type="tFormalExpression">_3_CommentInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_SkippableInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">false</from>
-          <to xsi:type="tFormalExpression">_3_SkippableInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_ContentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">A</from>
-          <to xsi:type="tFormalExpression">_3_ContentInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_TaskNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Task A</from>
-          <to xsi:type="tFormalExpression">_3_TaskNameInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_GroupIdInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">GroupA</from>
-          <to xsi:type="tFormalExpression">_3_GroupIdInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_PriorityInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_3_PriorityInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <potentialOwner>
-        <resourceAssignmentExpression>
-          <formalExpression></formalExpression>
-        </resourceAssignmentExpression>
-      </potentialOwner>
-    </userTask>
-
-    <!-- connections -->
-    <sequenceFlow id="_3-_2" sourceRef="_3" targetRef="_2" />
-    <sequenceFlow id="_1-_3" sourceRef="_1" targetRef="_3" />
-
-  </process>
-
-  <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="org.plugtree.training.jbpm.sampleprocess" >
-      <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="16" y="16" width="48" height="48" />
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/bpmn20" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_ZZOikFS6EeG6RM8M8E8kUw" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.omg.org/bpmn20" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:process id="org.plugtree.training.jbpm.sampleprocess" drools:packageName="org.plugtree.training.jbpm" name="sampleProcess.b" isExecutable="true">
+    <bpmn2:startEvent id="_BC5F2CC4-CD2D-48C1-BBD9-552C5ECB2FA9" drools:bgcolor="#ffffff" name="Start">
+      <bpmn2:outgoing>_84A2C280-CAE3-4E9C-AC47-4F670A1FC8A8</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="_5A8EEF38-7E0E-4579-A8B5-3FE05D647BB7" drools:bgcolor="#ffffff" name="End">
+      <bpmn2:incoming>_E3D4C1BA-707D-4A3A-ADBF-4758186D8416</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="_ZZOikVS6EeG6RM8M8E8kUw"/>
+    </bpmn2:endEvent>
+    <bpmn2:userTask id="_2CF47428-D368-48DC-8969-71BB65CBE9DF" drools:scriptFormat="http://www.java.com/java" name="Task A">
+      <bpmn2:incoming>_84A2C280-CAE3-4E9C-AC47-4F670A1FC8A8</bpmn2:incoming>
+      <bpmn2:outgoing>_E3D4C1BA-707D-4A3A-ADBF-4758186D8416</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="_ZZOiklS6EeG6RM8M8E8kUw">
+        <bpmn2:dataInput id="_2CF47428-D368-48DC-8969-71BB65CBE9DF_CommentInput" name="Comment"/>
+        <bpmn2:dataInput id="_2CF47428-D368-48DC-8969-71BB65CBE9DF_SkippableInput" name="Skippable"/>
+        <bpmn2:dataInput id="_2CF47428-D368-48DC-8969-71BB65CBE9DF_ContentInput" name="Content"/>
+        <bpmn2:dataInput id="_2CF47428-D368-48DC-8969-71BB65CBE9DF_GroupIdInput" name="GroupId"/>
+        <bpmn2:dataInput id="_2CF47428-D368-48DC-8969-71BB65CBE9DF_PriorityInput" name="Priority"/>
+        <bpmn2:dataInput id="_2CF47428-D368-48DC-8969-71BB65CBE9DF_TaskNameInput" name="TaskName"/>
+        <bpmn2:inputSet id="_ZZOik1S6EeG6RM8M8E8kUw">
+          <bpmn2:dataInputRefs>_2CF47428-D368-48DC-8969-71BB65CBE9DF_CommentInput</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>_2CF47428-D368-48DC-8969-71BB65CBE9DF_SkippableInput</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>_2CF47428-D368-48DC-8969-71BB65CBE9DF_ContentInput</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>_2CF47428-D368-48DC-8969-71BB65CBE9DF_GroupIdInput</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>_2CF47428-D368-48DC-8969-71BB65CBE9DF_PriorityInput</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>_2CF47428-D368-48DC-8969-71BB65CBE9DF_TaskNameInput</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_ZZPJoFS6EeG6RM8M8E8kUw"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_ZZPJoVS6EeG6RM8M8E8kUw">
+        <bpmn2:targetRef>_2CF47428-D368-48DC-8969-71BB65CBE9DF_CommentInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_ZZPJolS6EeG6RM8M8E8kUw">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZZPJo1S6EeG6RM8M8E8kUw">Task A</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_ZZPJpFS6EeG6RM8M8E8kUw">_2CF47428-D368-48DC-8969-71BB65CBE9DF_CommentInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_ZZPJpVS6EeG6RM8M8E8kUw">
+        <bpmn2:targetRef>_2CF47428-D368-48DC-8969-71BB65CBE9DF_SkippableInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_ZZPJplS6EeG6RM8M8E8kUw">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZZPJp1S6EeG6RM8M8E8kUw">false</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_ZZPJqFS6EeG6RM8M8E8kUw">_2CF47428-D368-48DC-8969-71BB65CBE9DF_SkippableInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_ZZPJqVS6EeG6RM8M8E8kUw">
+        <bpmn2:targetRef>_2CF47428-D368-48DC-8969-71BB65CBE9DF_ContentInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_ZZPJqlS6EeG6RM8M8E8kUw">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZZPJq1S6EeG6RM8M8E8kUw">A</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_ZZPJrFS6EeG6RM8M8E8kUw">_2CF47428-D368-48DC-8969-71BB65CBE9DF_ContentInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_ZZPJrVS6EeG6RM8M8E8kUw">
+        <bpmn2:targetRef>_2CF47428-D368-48DC-8969-71BB65CBE9DF_TaskNameInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_ZZPJrlS6EeG6RM8M8E8kUw">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZZPJr1S6EeG6RM8M8E8kUw">Task A</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_ZZPJsFS6EeG6RM8M8E8kUw">_2CF47428-D368-48DC-8969-71BB65CBE9DF_TaskNameInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_ZZPJsVS6EeG6RM8M8E8kUw">
+        <bpmn2:targetRef>_2CF47428-D368-48DC-8969-71BB65CBE9DF_GroupIdInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_ZZPJslS6EeG6RM8M8E8kUw">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZZPJs1S6EeG6RM8M8E8kUw">GroupA</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_ZZPJtFS6EeG6RM8M8E8kUw">_2CF47428-D368-48DC-8969-71BB65CBE9DF_GroupIdInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_ZZPJtVS6EeG6RM8M8E8kUw">
+        <bpmn2:targetRef>_2CF47428-D368-48DC-8969-71BB65CBE9DF_PriorityInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_ZZPJtlS6EeG6RM8M8E8kUw">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_ZZPJt1S6EeG6RM8M8E8kUw"></bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_ZZPJuFS6EeG6RM8M8E8kUw">_2CF47428-D368-48DC-8969-71BB65CBE9DF_PriorityInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="_E3D4C1BA-707D-4A3A-ADBF-4758186D8416" sourceRef="_2CF47428-D368-48DC-8969-71BB65CBE9DF" targetRef="_5A8EEF38-7E0E-4579-A8B5-3FE05D647BB7"/>
+    <bpmn2:sequenceFlow id="_84A2C280-CAE3-4E9C-AC47-4F670A1FC8A8" sourceRef="_BC5F2CC4-CD2D-48C1-BBD9-552C5ECB2FA9" targetRef="_2CF47428-D368-48DC-8969-71BB65CBE9DF"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="_ZZPJuVS6EeG6RM8M8E8kUw">
+    <bpmndi:BPMNPlane id="_ZZPJulS6EeG6RM8M8E8kUw" bpmnElement="org.plugtree.training.jbpm.sampleprocess">
+      <bpmndi:BPMNShape id="_ZZPJu1S6EeG6RM8M8E8kUw" bpmnElement="_BC5F2CC4-CD2D-48C1-BBD9-552C5ECB2FA9">
+        <dc:Bounds height="30.0" width="30.0" x="25.0" y="25.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_2" >
-        <dc:Bounds x="228" y="16" width="48" height="48" />
+      <bpmndi:BPMNShape id="_ZZPJvFS6EeG6RM8M8E8kUw" bpmnElement="_5A8EEF38-7E0E-4579-A8B5-3FE05D647BB7">
+        <dc:Bounds height="28.0" width="28.0" x="236.0" y="24.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_3" >
-        <dc:Bounds x="96" y="16" width="100" height="48" />
+      <bpmndi:BPMNShape id="_ZZPJvVS6EeG6RM8M8E8kUw" bpmnElement="_2CF47428-D368-48DC-8969-71BB65CBE9DF">
+        <dc:Bounds height="48.0" width="100.0" x="96.0" y="16.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_3-_2" >
-        <di:waypoint x="146" y="40" />
-        <di:waypoint x="252" y="40" />
+      <bpmndi:BPMNEdge id="_ZZPJvlS6EeG6RM8M8E8kUw" bpmnElement="_E3D4C1BA-707D-4A3A-ADBF-4758186D8416">
+        <di:waypoint xsi:type="dc:Point" x="146.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="250.0" y="38.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_1-_3" >
-        <di:waypoint x="40" y="40" />
-        <di:waypoint x="146" y="40" />
+      <bpmndi:BPMNEdge id="_ZZPJv1S6EeG6RM8M8E8kUw" bpmnElement="_84A2C280-CAE3-4E9C-AC47-4F670A1FC8A8">
+        <di:waypoint xsi:type="dc:Point" x="40.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="146.0" y="40.0"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-
-</definitions>
+</bpmn2:definitions>

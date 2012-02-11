@@ -27,7 +27,9 @@
         <terminateEventDefinition/>
     </endEvent>
     <scriptTask id="_4" name="Format tag" scriptFormat="http://www.java.com/java" >
-      <script>java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("mm-dd-yyyy");
+      <script>
+      System.out.println("Parent-process id = "+kcontext.getProcessInstance().getId());
+java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("mm-dd-yyyy");
 kcontext.setVariable("tag",  sdf.format(new java.util.Date(System.currentTimeMillis())));</script>
     </scriptTask>
     <callActivity id="_5" name="Message-Tagger-Process" calledElement="org.plugtree.training.jbpm.reusablesubprocesschild" >

@@ -27,7 +27,9 @@
         <terminateEventDefinition/>
     </endEvent>
     <scriptTask id="_4" name="Apply Tag" scriptFormat="http://www.java.com/java" >
-      <script>java.util.List&lt;String&gt; taggedMessages = new java.util.ArrayList&lt;String&gt;();
+      <script>
+      System.out.println("Child-process id = "+kcontext.getProcessInstance().getId());
+java.util.List&lt;String&gt; taggedMessages = new java.util.ArrayList&lt;String&gt;();
 for (Object message : internalMessages){
     taggedMessages.add(((String)message)+"-"+internalTag);    
 }

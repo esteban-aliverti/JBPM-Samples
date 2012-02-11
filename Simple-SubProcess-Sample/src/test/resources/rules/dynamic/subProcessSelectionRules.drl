@@ -14,6 +14,7 @@ rule "Select Person Tagger"
 		System.out.println("EAA");
 		((WorkflowProcessInstance)kcontext.getKnowledgeRuntime().getProcessInstance($process.getId())).setVariable("selectedSubProcessId","org.plugtree.training.jbpm.persontaggerprocess");
 		retract($p);
+		retract($process);
 end
 
 rule "Select Car Tagger"
@@ -24,4 +25,5 @@ rule "Select Car Tagger"
 	then 
 		((WorkflowProcessInstance)kcontext.getKnowledgeRuntime().getProcessInstance($process.getId())).setVariable("selectedSubProcessId","org.plugtree.training.jbpm.cartaggerprocess");
 		retract($c);
+                retract($process);
 end

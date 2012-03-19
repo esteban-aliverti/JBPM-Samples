@@ -114,15 +114,17 @@ public class SimplePersistenceTest extends BaseTest{
 
     @Test
     public void simpleProcessTest() throws Exception {
-        TransactionManagerServices.getTransactionManager().begin();
+        //TransactionManagerServices.getTransactionManager().begin();
         
         //creates an Entity Manager
-        EntityManager em = this.domainEmf.createEntityManager();
-        
+       EntityManager em = this.domainEmf.createEntityManager();
+        em.getTransaction().begin();
         //create an empty document
         Document document = new Document();
         em.persist(document);
-        em.close();
+   em.getTransaction().commit();
+        
+        
         
         //Start the process using its id
         Map<String, Object> inputParameters = new HashMap<String, Object>();
@@ -151,7 +153,10 @@ public class SimplePersistenceTest extends BaseTest{
         
         //Salaboy completes its task
         Document taskDocument = this.getTaskContent(salaboyTasks.get(0));
+        em.getTransaction().begin();
         taskDocument.setContent("This is the content of the document");
+        em.merge(taskDocument);
+        em.getTransaction().commit();
         Map result = new HashMap();
         result.put("Result", taskDocument);
         
@@ -237,7 +242,7 @@ public class SimplePersistenceTest extends BaseTest{
         final StatefulKnowledgeSession newSession = JPAKnowledgeService.newStatefulKnowledgeSession(kbase, null, this.createEnvironment());
         
         //Register Human Task Handler
-        SyncWSHumanTaskHandler htHandler = new SyncWSHumanTaskHandler(localTaskService, ksession);
+        SyncWSHumanTaskHandler htHandler = new SyncWSHumanTaskHandler(localTaskService, newSession);
         htHandler.setLocal(true);
         newSession.getWorkItemManager().registerWorkItemHandler("Human Task", htHandler);
 
@@ -290,14 +295,15 @@ public class SimplePersistenceTest extends BaseTest{
     }
     
     private Environment createEnvironment(){
-        
+        Environment env2 = EnvironmentFactory.newEnvironment();
+        env2.set(EnvironmentName.ENTITY_MANAGER_FACTORY, domainEmf);
         Environment env = EnvironmentFactory.newEnvironment();
         env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, jbpmEmf );
         env.set(EnvironmentName.TRANSACTION_MANAGER, TransactionManagerServices.getTransactionManager());
-        env.set("DOMAIN_EMF", domainEmf);
+//        env.set("DOMAIN_EMF", domainEmf);
         env.set(EnvironmentName.OBJECT_MARSHALLING_STRATEGIES, new ObjectMarshallingStrategy[]{
-            //new JPAPlaceholderResolverStrategy(env),
-            new DomainMarshallingStrategy(env),
+            new JPAPlaceholderResolverStrategy(env2),
+            //new DomainMarshallingStrategy(env),
             new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT)
         });
         

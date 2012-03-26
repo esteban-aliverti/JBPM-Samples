@@ -38,7 +38,9 @@ public class DomainMarshallingStrategy implements ObjectMarshallingStrategy {
         os.writeObject(doc.getId());
         
         EntityManager em = this.getEntityManager();
+        em.getTransaction().begin();
         em.merge(doc);
+        em.getTransaction().commit();
         em.close();
     }
 

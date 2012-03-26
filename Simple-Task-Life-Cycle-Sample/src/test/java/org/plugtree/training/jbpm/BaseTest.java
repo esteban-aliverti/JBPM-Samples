@@ -35,7 +35,7 @@ import org.jbpm.task.service.EscalatedDeadlineHandler;
 import org.jbpm.task.service.SendIcal;
 import org.jbpm.task.service.TaskService;
 import org.jbpm.task.service.TaskServiceSession;
-import org.jbpm.task.service.local.LocalTaskService;
+import org.jbpm.task.service.local.*;
 import org.junit.After;
 import org.junit.Before;
 import org.mvel2.MVEL;
@@ -104,7 +104,7 @@ public abstract class BaseTest {
             taskSession.addGroup(group);
         }
  
-        localTaskService = new LocalTaskService(taskSession);
+        localTaskService = new LocalTaskService(taskService);
     }
 
     @After

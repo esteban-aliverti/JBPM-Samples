@@ -35,7 +35,6 @@
         <dataInput id="_3_Deadline_Reassignment_Potential_OwnersInput" name="Deadline_Reassignment_Potential_Owners" />
         <dataInput id="_3_CommentInput" name="Comment" />
         <dataInput id="_3_SkippableInput" name="Skippable" />
-        <dataInput id="_3_ContentInput" name="Content" />
         <dataInput id="_3_TaskNameInput" name="TaskName" />
         <dataInput id="_3_GroupIdInput" name="GroupId" />
         <dataInput id="_3_PriorityInput" name="Priority" />
@@ -45,7 +44,6 @@
           <dataInputRefs>_3_Deadline_Reassignment_Potential_OwnersInput</dataInputRefs>
           <dataInputRefs>_3_CommentInput</dataInputRefs>
           <dataInputRefs>_3_SkippableInput</dataInputRefs>
-          <dataInputRefs>_3_ContentInput</dataInputRefs>
           <dataInputRefs>_3_TaskNameInput</dataInputRefs>
           <dataInputRefs>_3_GroupIdInput</dataInputRefs>
           <dataInputRefs>_3_PriorityInput</dataInputRefs>
@@ -77,13 +75,6 @@
         <assignment>
           <from xsi:type="tFormalExpression">false</from>
           <to xsi:type="tFormalExpression">_3_SkippableInput</to>
-        </assignment>
-      </dataInputAssociation>
-   <dataInputAssociation>
-        <targetRef>_3_ContentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_3_ContentInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>

@@ -74,8 +74,9 @@ public class EscalationProcessTest extends BaseTest implements Serializable {
         ((DefaultEscalatedDeadlineHandler)this.getEscalatedDeadlineHandler()).setManager(this.ksession.getWorkItemManager());
         
         //Configure a smtp server
-        wiser = new Wiser(1125);
+        wiser = new Wiser();
         wiser.setHostname("localhost");
+        wiser.setPort(1125);
         wiser.start();
         
     }

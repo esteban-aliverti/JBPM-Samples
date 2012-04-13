@@ -246,13 +246,13 @@ public class DeadlineEnabledWSHumanTaskHandler implements WorkItemHandler {
                 notification.setBusinessAdministrators(businessAdministrators);
                 
                 //Email Header
-                Map<String,EmailNotificationHeader> emailHeaders = new HashMap<String, EmailNotificationHeader>();
+                Map<Language,EmailNotificationHeader> emailHeaders = new HashMap<Language, EmailNotificationHeader>();
                 EmailNotificationHeader emailHeader = new EmailNotificationHeader();
                 emailHeader.setLanguage("en-UK");
                 emailHeader.setFrom("taskNotification@system.com");
                 emailHeader.setSubject(taskName+" reaches its deadline");
                 emailHeader.setBody(taskName+" reaches its deadline. Now it is your responsability!");
-                emailHeaders.put("en-UK", emailHeader);
+                emailHeaders.put(new Language("en-UK"), emailHeader);
                 notification.setEmailHeaders(emailHeaders);
                 
                 notifications.add(notification);
